@@ -2,7 +2,9 @@
 #include <Python.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "include/common.h"
+#include "include/pydef.h"
 
 
 static PyObject* randint(PyObject* self, PyObject *args) {
@@ -59,16 +61,6 @@ static PyListObject* generate_range(PyObject* self, PyObject* args) {
         return NULL;
     }
 
-    int randf;
-    // char* output = malloc(FIXED_SIZE);
-    PyListObject* output = (PyListObject*) PyList_New((Py_ssize_t)length);
-    int array[91] = { 0 };
-    int pos = 0;
-
-
-
-    //memset(output, 0, FIXED_SIZE);
-
     if (length > 90) {
 
         PyGILState_STATE gstate = PyGILState_Ensure();
@@ -77,6 +69,20 @@ static PyListObject* generate_range(PyObject* self, PyObject* args) {
 
         return NULL;
     }
+
+    if (length < 0) {
+        PyGILState_STATE gstate = PyGILState_Ensure();
+        PyErr_SetString(PyExc_ValueError, "length must be positive");
+        PyGILState_Release(gstate);
+
+        return NULL;
+    }
+
+    int randf;
+    PyListObject* output = (PyListObject*) PyList_New((Py_ssize_t)length);
+    
+    int array[91] = { 0 };
+    int pos = 0;
 
     while (1) {
         
@@ -111,18 +117,19 @@ static PyListObject* generate_range(PyObject* self, PyObject* args) {
     return output;
 }
 
-static PyMethodDef AllModules[] = {
-    {"generate_range", (PyCFunction)generate_range, METH_VARARGS, "Return a list of random numbers."},
-    {"randint", (PyCFunction)randint, METH_VARARGS, "Return a random integer."},
+
+static PyMethodDef methods[] = {
+    {"generate_range", (PyCFunction)generate_range, METH_VARARGS, generate_range__doc__},
+    {"randint", (PyCFunction)randint, METH_VARARGS, randint__doc__},
     {NULL, NULL, 0, NULL}
 };
 
 static struct PyModuleDef Module = {
     PyModuleDef_HEAD_INIT,
-    "Module",
+    "rdrand",
     "generate_range module",
     -1,
-    AllModules
+    methods
 };
 
 PyMODINIT_FUNC PyInit_rdrand(void) {
