@@ -5,6 +5,52 @@
 #include "include/common.h"
 
 
+static PyObject* randint(PyObject* self, PyObject *args) {
+
+    int randf;
+    int min, max;
+
+    if (!PyArg_ParseTuple(args, "ii", &min, &max)) {
+        return NULL;
+    }
+
+    if (min > max) {
+        PyGILState_STATE gstate = PyGILState_Ensure();
+        PyErr_SetString(PyExc_ValueError, "Minimum value is greater than max.\n");
+        PyGILState_Release(gstate);
+
+        return NULL;
+    }
+
+    if (min < 0 && max < 0) {
+        PyGILState_STATE gstate = PyGILState_Ensure();
+        PyErr_SetString(PyExc_ValueError, "Negative range isn't supported.");
+        PyGILState_Release(gstate);
+
+        return NULL;
+    }
+
+    max++;
+
+    while (1) {
+        if (!generate_rdrand64(&randf, max)) {
+
+            if (randf >= min && randf <= max)
+                break;
+
+        } else {
+            perror("Failed to get random value.");
+            exit(2);
+        }
+    }
+
+    // if (min < 0 && max < 0 && randf > 0)
+    //     randf = ~randf + 1;
+
+    return (PyObject*) PyLong_FromLong(randf);
+
+}
+
 static PyListObject* generate_range(PyObject* self, PyObject* args) {
 
     int length;
@@ -24,7 +70,11 @@ static PyListObject* generate_range(PyObject* self, PyObject* args) {
     //memset(output, 0, FIXED_SIZE);
 
     if (length > 90) {
-        printf("Length must be in the following range: 1-90. %d given.\n", length);
+
+        PyGILState_STATE gstate = PyGILState_Ensure();
+        PyErr_SetString(PyExc_ValueError, "Lenght must be in the following range 0-90.\n");
+        PyGILState_Release(gstate);
+
         return NULL;
     }
 
@@ -32,7 +82,7 @@ static PyListObject* generate_range(PyObject* self, PyObject* args) {
         
         int insert = 1;
         
-        if (!generate_rdrand64(&randf)) {
+        if (!generate_rdrand64_90(&randf)) {
             for (int i = 0; i < length; i++) {
                 if (array[i] == (int) randf) {
                     insert = 0;
@@ -63,6 +113,7 @@ static PyListObject* generate_range(PyObject* self, PyObject* args) {
 
 static PyMethodDef AllModules[] = {
     {"generate_range", (PyCFunction)generate_range, METH_VARARGS, "Return a list of random numbers."},
+    {"randint", (PyCFunction)randint, METH_VARARGS, "Return a random integer."},
     {NULL, NULL, 0, NULL}
 };
 

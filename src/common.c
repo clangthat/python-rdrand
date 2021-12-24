@@ -22,7 +22,21 @@ char generate_rdrand64_ia32(float *randf, float min, float max) {
     return 0;
 }
 
-char generate_rdrand64(int *number) {
+char generate_rdrand64(int *number, int max) {
+
+    uint64_t retn;
+
+    if (rdrand_check_support() == 1) {
+        rdrand_get_uint64_retry(10, &retn);
+        *number = (int) retn % max;
+    } else {
+        fprintf(stderr, "RDRAND instruction not supported.\n");
+        return -1;
+    }
+    return 0;
+}
+
+char generate_rdrand64_90(int *number) {
     
     uint64_t retn;
     int m, v;
@@ -39,6 +53,7 @@ char generate_rdrand64(int *number) {
         fprintf(stderr, "RDRAND instruction not supported.\n");
         return -1;
     }
+    
     return 0;
 }
 
