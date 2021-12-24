@@ -11,4 +11,9 @@
     "--\n\n"                                                            \
     "Generate a range between min, max (positive)."                     \
 
+#define generate_range_bellow__doc__                                    \
+    "generate_range_bellow(length, bellow)\n"                           \
+    "--\n\n"                                                            \
+    "Generate a N positive integers bellow."                            \
+
 #endif

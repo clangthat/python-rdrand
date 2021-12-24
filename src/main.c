@@ -51,6 +51,73 @@ static PyObject* randint(PyObject* self, PyObject *args) {
 
 }
 
+static PyListObject* generate_range_bellow(PyObject* self, PyObject* args) {
+
+    int length, bellow;
+
+    if (!PyArg_ParseTuple(args, "ii", &length, &bellow)) {
+        return NULL;
+    }
+
+    if (length > bellow) {
+        PyGILState_STATE gstate = PyGILState_Ensure();
+        PyErr_SetString(PyExc_ValueError, "Length must be smaller than 'bellow', because this method will return a non-repeated values.");
+        PyGILState_Release(gstate);
+
+        return NULL;
+    }
+
+    if (length < 0) {
+
+        PyGILState_STATE gstate = PyGILState_Ensure();
+        PyErr_SetString(PyExc_ValueError, "Length must be positive.");
+        PyGILState_Release(gstate);
+
+        return NULL;
+    }
+
+    int randf;
+    PyListObject* output = (PyListObject*) PyList_New((Py_ssize_t)length);
+
+    int* array = malloc(length * sizeof(int));
+    memset(array, 0, length * sizeof(int));
+
+    int pos = 0;
+
+    while (1) {
+        
+        int insert = 1;
+        
+        if (!generate_rdrand64_bellow(&randf, bellow)) {
+            for (int i = 0; i < length; i++) {
+                if (array[i] == (int) randf) {
+                    insert = 0;
+                    break;
+                }
+            }
+
+            if (pos == length) {
+                break;
+            }
+
+            if (insert) {
+                array[pos] = (int) randf;
+                pos++;
+            }
+        } else {
+            perror("Failed to get random value.");
+            exit(2);
+        }
+    }
+
+    for (int i = 0; i < length; i++) {
+        PyList_SetItem((PyObject*) output, (Py_ssize_t) i, PyLong_FromLong(array[i]));
+    }
+
+    free(array);
+    return output;
+}
+
 static PyListObject* generate_range(PyObject* self, PyObject* args) {
 
     int length;
@@ -119,6 +186,7 @@ static PyListObject* generate_range(PyObject* self, PyObject* args) {
 static PyMethodDef methods[] = {
     {"generate_range", (PyCFunction)generate_range, METH_VARARGS, generate_range__doc__},
     {"randint", (PyCFunction)randint, METH_VARARGS, randint__doc__},
+    {"generate_range_bellow", (PyCFunction)generate_range_bellow, METH_VARARGS, generate_range_bellow__doc__},
     {NULL, NULL, 0, NULL}
 };
 

@@ -36,6 +36,25 @@ char generate_rdrand64(int *number, int max) {
     return 0;
 }
 
+char generate_rdrand64_bellow(int *number, int bellow) {
+    
+    uint64_t retn;
+    int m, v;
+
+    if (rdrand_check_support() == 1) {
+        rdrand_get_uint64_retry(10, &retn);
+        
+        v = (int) retn % (bellow + 1);
+        m = v >> sizeof(int) * (__CHAR_BIT__ - 1);
+        *number = (int) (v + m) ^ m;
+    } else {
+        fprintf(stderr, "RDRAND instruction not supported.\n");
+        return -1;
+    }
+
+    return 0;
+}
+
 char generate_rdrand64_90(int *number) {
     
     uint64_t retn;
