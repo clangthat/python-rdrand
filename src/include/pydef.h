@@ -16,4 +16,19 @@
     "--\n\n"                                                            \
     "Generate a N positive integers bellow."                            \
 
+#define generate_n_range_bellow__doc__                                  \
+    "generate_n_range_bellow(length, bellow, amount)\n"                 \
+    "--\n\n"                                                            \
+    "Generate a N-sized array with 'length' positive integers bellow."  \
+
+#define is_rdrand_supported__doc__                                      \
+    "is_rdrand_supported()\n"                                           \
+    "--\n\n"                                                            \
+    "Check if rdrand instruction is supported by current CPU."          \
+
+#define is_rdseed_supported__doc__                                      \
+    "is_rdseed_supported()\n"                                           \
+    "--\n\n"                                                            \
+    "Check if rdseed instruction is supported by current CPU."          \
+
 #endif
