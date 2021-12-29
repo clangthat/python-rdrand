@@ -90,7 +90,7 @@ static PyListObject* generate_n_range_bellow(PyObject* self, PyObject* args) {
     PyListObject* output = (PyListObject*) PyList_New((Py_ssize_t)amount);
 
     for (int i = 0; i < amount; i++) {
-        memset(array, 0, length * sizeof(int));
+        memset(array, length+1, length * sizeof(int));
         PyListObject* sublist = (PyListObject*) PyList_New((Py_ssize_t)length);
 
         int pos = 0;
@@ -99,7 +99,7 @@ static PyListObject* generate_n_range_bellow(PyObject* self, PyObject* args) {
             
             int insert = 1;
             
-            if (!generate_rdrand64_bellow(&randf, bellow)) {
+            if (!generate_rdrand64_bellow(&randf, bellow+1)) {
                 for (int j = 0; j < length; j++) {
                     if (array[j] == (int) randf) {
                         insert = 0;
@@ -112,8 +112,7 @@ static PyListObject* generate_n_range_bellow(PyObject* self, PyObject* args) {
                 }
 
                 if (insert) {
-                    array[pos] = (int) randf;
-                    pos++;
+                    array[pos++] = (int) randf;
                 }
             } else {
                 perror("Failed to get random value.");
@@ -163,7 +162,7 @@ static PyListObject* generate_range_bellow(PyObject* self, PyObject* args) {
     PyListObject* output = (PyListObject*) PyList_New((Py_ssize_t)length);
 
     int* array = malloc(length * sizeof(int));
-    memset(array, 0, length * sizeof(int));
+    memset(array, length+1, length * sizeof(int));
 
     int pos = 0;
 
@@ -171,7 +170,7 @@ static PyListObject* generate_range_bellow(PyObject* self, PyObject* args) {
         
         int insert = 1;
         
-        if (!generate_rdrand64_bellow(&randf, bellow)) {
+        if (!generate_rdrand64_bellow(&randf, bellow+1)) {
             for (int i = 0; i < length; i++) {
                 if (array[i] == (int) randf) {
                     insert = 0;
@@ -184,8 +183,7 @@ static PyListObject* generate_range_bellow(PyObject* self, PyObject* args) {
             }
 
             if (insert) {
-                array[pos] = (int) randf;
-                pos++;
+                array[pos++] = (int) randf;
             }
         } else {
             perror("Failed to get random value.");
@@ -277,6 +275,14 @@ static PyObject* is_rdseed_supported(PyObject* self) {
     return (PyObject*)Py_False;
 }
 
+static PyObject* rdseed(PyObject* self) {
+
+    uint64_t retorno = 0;
+    generate_rdseed(&retorno);
+
+    return (PyObject*) PyLong_FromLong(retorno);
+}
+
 static PyMethodDef methods[] = {
     {"generate_range", (PyCFunction)generate_range, METH_VARARGS, generate_range__doc__},
     {"randint", (PyCFunction)randint, METH_VARARGS, randint__doc__},
@@ -284,6 +290,7 @@ static PyMethodDef methods[] = {
     {"generate_n_range_bellow", (PyCFunction)generate_n_range_bellow, METH_VARARGS, generate_n_range_bellow__doc__},
     {"is_rdrand_supported", (PyCFunction)is_rdrand_supported, METH_NOARGS, is_rdrand_supported__doc__},
     {"is_rdseed_supported", (PyCFunction)is_rdseed_supported, METH_NOARGS, is_rdseed_supported__doc__},
+    {"rdseed", (PyCFunction)rdseed, METH_NOARGS, "Return a int64 long using rdseed cpu instruction."},
     {NULL, NULL, 0, NULL}
 };
 

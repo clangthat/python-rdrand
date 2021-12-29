@@ -44,7 +44,7 @@ char generate_rdrand64_bellow(int *number, int bellow) {
     if (rdrand_check_support() == 1) {
         rdrand_get_uint64_retry(10, &retn);
         
-        v = (int) retn % (bellow + 1);
+        v = (int) retn % (bellow - 1);
         m = v >> sizeof(int) * (__CHAR_BIT__ - 1);
         *number = (int) (v + m) ^ m;
     } else {
@@ -74,6 +74,18 @@ char generate_rdrand64_90(int *number) {
     }
     
     return 0;
+}
+
+char generate_rdseed(uint64_t *number) {
+    
+    if (rdseed_check_support() == 1) {
+        rdseed_get_uint64_retry(10, number);
+        return 0;
+    }
+
+    fprintf(stderr, "RDSEED instruction isn't supported.");
+    return -1;
+
 }
 
 // char* generate_range(unsigned int length) {

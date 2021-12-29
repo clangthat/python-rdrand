@@ -31,4 +31,9 @@
     "--\n\n"                                                            \
     "Check if rdseed instruction is supported by current CPU."          \
 
+#define rdseed__doc__                                                   \
+    "rdseed()\n"                                                        \
+    "--\n\n"                                                            \
+    "Return an int converted from uint64_t using  rdseed instruction."  \
+
 #endif
