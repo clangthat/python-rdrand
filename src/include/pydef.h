@@ -1,6 +1,9 @@
 #ifndef __PYCDEF__
 #define __PYCDEF__
 
+#define rdrand__doc__                                                   \
+    "Intel's RDRAND/RDSEED interface for Python 3.9"
+
 #define generate_range__doc__                                           \
     "generate_range(length)\n"                                          \
     "--\n\n"                                                            \

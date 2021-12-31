@@ -6,8 +6,8 @@ function prereq() {
     if ! [[ -e $PYEXEC ]]; then
         echo "$PYEXEC not found. Please specify the Python 3.9 binary in line 3 of this script."
         exit 1
-    fi 
-    
+    fi
+
     SETUP_TOOLS=$(python3.9 -c "
 import sys
 try:
@@ -27,24 +27,24 @@ else:
 
 function clean() {
     echo -n "Cleaning... "
-    rm -rf "rdrand.cpython-39-x86_64-linux-gnu.so"
+    rm -rf *.so
     rm -rf build
     echo "OK"
 }
 
 function build() {
-    
+
     # Check pre-requisites before trying to build
     prereq
-    
+
     # Ensure to clean first
-    clean   
+    clean
 
     # Compile with rdrand switch.
     CFLAGS="-mrdrnd" "$PYEXEC" setup.py build
-    
+
     echo -n "Copying shared object to current directory... "
-    cp -f "build/lib.linux-x86_64-3.9/rdrand.cpython-39-x86_64-linux-gnu.so" . && echo "OK"
+    cp -f build/lib.linux-x86_64-3.9/*.so . && echo "OK"
 }
 
 if [ "$1" == "clean" ]; then

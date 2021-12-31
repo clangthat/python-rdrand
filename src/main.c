@@ -297,11 +297,51 @@ static PyMethodDef methods[] = {
 static struct PyModuleDef Module = {
     PyModuleDef_HEAD_INIT,
     "rdrand",
-    "generate_range module",
+    rdrand__doc__,
     -1,
     methods
 };
 
 PyMODINIT_FUNC PyInit_rdrand(void) {
+    
+    /* Check rdrand/rdseed compatibiltiy before initialize the module */
+    if (rdrand_check_support() != 1 || rdseed_check_support() != 1) {
+
+        PyGILState_STATE gstate = PyGILState_Ensure();
+        PyErr_SetString(PyExc_ImportError, "This CPU does not support the rdrand/rdseed instruction.\n");
+        PyGILState_Release(gstate);
+
+        return NULL;
+    }
+
     return PyModule_Create(&Module);
 }
+
+// int main(int argc, char** argv) {
+//     wchar_t *program = Py_DecodeLocale(argv[0], NULL);
+    
+//     if (program == NULL) {
+//         fprintf(stderr, "Fatal error: cannot decode argv[0].\n");
+//         exit(1);
+//     }
+
+//     /* Add a built-in module, before Py_Initialize */
+//     if (PyImport_AppendInittab("rdrand", PyInit_rdrand) == -1) {
+//         fprintf(stderr, "Error: could not extend in-built modules table.\n");
+//         exit(1);
+//     }
+
+//     Py_SetProgramName(program);
+
+//     /* Initialize the Python interpreter */
+//     Py_Initialize();
+
+//     PyObject *pmodule = PyImport_ImportModule("rdrand");
+//     if (!pmodule) {
+//         PyErr_Print();
+//         fprintf(stderr, "Error: could not import module 'rdrand'.\n");
+//     }
+
+//     PyMem_RawFree(program);
+//     return 0;
+// }
