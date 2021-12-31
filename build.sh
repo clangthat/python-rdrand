@@ -43,8 +43,12 @@ function build() {
     # Compile with rdrand switch.
     CFLAGS="-mrdrnd" "$PYEXEC" setup.py build
 
-    echo -n "Copying shared object to current directory... "
-    cp -f build/lib.linux-x86_64-3.9/*.so . && echo "OK"
+    if [ "$1" == "install" ]; then
+        CFLAGS="-mrdrnd" "$PYEXEC" setup.py install
+    else
+        echo -n "Copying shared object to current directory... "
+        cp -f build/lib.linux-x86_64-3.9/*.so . && echo "OK"
+    fi
 }
 
 if [ "$1" == "clean" ]; then
