@@ -14,7 +14,7 @@ See more: https://en.wikipedia.org/wiki/RDRAND
 # Clone this repo.
 git clone https://github.com/trusted-ws/python-rdrand
 
-# Go inside the directory.
+# Inside the directory.
 cd python-rdrand
 
 # Using sudo, compile and install the module:
@@ -26,5 +26,5 @@ Open a Python 3x console and try to import:
 import rdrand
 ```
 ```diff
-- In case of your CPU doesn't support RDRAND instruction, so a ImportError will be raised. -
+- An ImportError should be raised in case of tour CPU doesn't support rdrand. -
 ``` 
