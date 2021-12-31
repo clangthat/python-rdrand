@@ -46,13 +46,12 @@ function build() {
     if [ "$1" == "install" ]; then
         CFLAGS="-mrdrnd" "$PYEXEC" setup.py install
     else
-        echo -n "Copying shared object to current directory... "
+        echo -n "Copying shared object to current directory..."
         cp -f build/lib.linux-x86_64-3.9/*.so . && echo "OK"
     fi
 }
-
 if [ "$1" == "clean" ]; then
     clean
 else
-    build
+    build $1
 fi
