@@ -8,7 +8,7 @@ function prereq() {
         exit 1
     fi
 
-    SETUP_TOOLS=$(python3.9 -c "
+    SETUP_TOOLS=$("$PYEXEC" -c "
 import sys
 try:
     import setuptools
