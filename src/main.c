@@ -51,7 +51,7 @@ static PyObject* randint(PyObject* self, PyObject *args) {
 
 }
 
-static PyListObject* generate_n_range_bellow(PyObject* self, PyObject* args) {
+static PyListObject* n_range_bellow(PyObject* self, PyObject* args) {
 
     int length, bellow, amount;
 
@@ -133,7 +133,7 @@ static PyListObject* generate_n_range_bellow(PyObject* self, PyObject* args) {
     return output;
 }
 
-static PyListObject* generate_range_bellow(PyObject* self, PyObject* args) {
+static PyListObject* range_bellow(PyObject* self, PyObject* args) {
 
     int length, bellow;
 
@@ -199,18 +199,24 @@ static PyListObject* generate_range_bellow(PyObject* self, PyObject* args) {
     return output;
 }
 
-static PyListObject* generate_range(PyObject* self, PyObject* args) {
+static PyListObject* range(PyObject* self, PyObject* args, PyObject* kwargs) {
 
     int length;
+    int boundary = 90;
+
+    char* keywords[] = {"length", "boundary", NULL};
     
-    if (!PyArg_ParseTuple(args, "i", &length)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i|i", keywords, &length, &boundary)) {
         return NULL;
     }
 
-    if (length > 90) {
+    if (length > boundary) {
+
+        char exception_text[256];
+        sprintf(exception_text, "Lenght must be in the following range 0-%d.\n", abs(boundary));
 
         PyGILState_STATE gstate = PyGILState_Ensure();
-        PyErr_SetString(PyExc_ValueError, "Lenght must be in the following range 0-90.\n");
+        PyErr_SetString(PyExc_ValueError, exception_text);
         PyGILState_Release(gstate);
 
         return NULL;
@@ -227,14 +233,17 @@ static PyListObject* generate_range(PyObject* self, PyObject* args) {
     int randf;
     PyListObject* output = (PyListObject*) PyList_New((Py_ssize_t)length);
     
-    int array[91] = { 0 };
+    // int array[91] = { 0 };
+    int* array = (int*) malloc(boundary * sizeof(int));
+    memset(array, 0, boundary * sizeof(int));
+    
     int pos = 0;
 
     while (1) {
         
         int insert = 1;
         
-        if (!generate_rdrand64_90(&randf)) {
+        if (!generate_rdrand64_boundary(&randf, boundary)) {
             for (int i = 0; i < length; i++) {
                 if (array[i] == (int) randf) {
                     insert = 0;
@@ -260,6 +269,7 @@ static PyListObject* generate_range(PyObject* self, PyObject* args) {
         PyList_SetItem((PyObject*) output, (Py_ssize_t) i, PyLong_FromLong(array[i]));
     }
 
+    free(array);
     return output;
 }
 
@@ -284,10 +294,10 @@ static PyObject* rdseed(PyObject* self) {
 }
 
 static PyMethodDef methods[] = {
-    {"generate_range", (PyCFunction)generate_range, METH_VARARGS, generate_range__doc__},
+    {"range", (PyCFunction)range, METH_VARARGS | METH_KEYWORDS, range__doc__},
     {"randint", (PyCFunction)randint, METH_VARARGS, randint__doc__},
-    {"generate_range_bellow", (PyCFunction)generate_range_bellow, METH_VARARGS, generate_range_bellow__doc__},
-    {"generate_n_range_bellow", (PyCFunction)generate_n_range_bellow, METH_VARARGS, generate_n_range_bellow__doc__},
+    {"range_bellow", (PyCFunction)range_bellow, METH_VARARGS, range_bellow__doc__},
+    {"n_range_bellow", (PyCFunction)n_range_bellow, METH_VARARGS, n_range_bellow__doc__},
     {"is_rdrand_supported", (PyCFunction)is_rdrand_supported, METH_NOARGS, is_rdrand_supported__doc__},
     {"is_rdseed_supported", (PyCFunction)is_rdseed_supported, METH_NOARGS, is_rdseed_supported__doc__},
     {"rdseed", (PyCFunction)rdseed, METH_NOARGS, "Return a int64 long using rdseed cpu instruction."},

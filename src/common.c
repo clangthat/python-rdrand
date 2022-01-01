@@ -55,7 +55,7 @@ char generate_rdrand64_bellow(int *number, int bellow) {
     return 0;
 }
 
-char generate_rdrand64_90(int *number) {
+char generate_rdrand64_boundary(int *number, int boundary) {
     
     uint64_t retn;
     int m, v;
@@ -64,7 +64,7 @@ char generate_rdrand64_90(int *number) {
         
         rdrand_get_uint64_retry(10, &retn);
 
-        v = (int) retn % (90 + 1);
+        v = (int) retn % (boundary + 1);
         m = v >> sizeof(int) * (__CHAR_BIT__ - 1);
         *number = (int) (v + m) ^ m;
     

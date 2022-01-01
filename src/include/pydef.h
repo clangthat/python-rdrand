@@ -4,8 +4,8 @@
 #define rdrand__doc__                                                   \
     "Intel's RDRAND/RDSEED interface for Python 3.9"
 
-#define generate_range__doc__                                           \
-    "generate_range(length)\n"                                          \
+#define range__doc__                                                    \
+    "range(length, boundary=90)\n"                                      \
     "--\n\n"                                                            \
     "Generate a non-repeated random range with specified length."       \
 
@@ -14,13 +14,13 @@
     "--\n\n"                                                            \
     "Generate a range between min, max (positive)."                     \
 
-#define generate_range_bellow__doc__                                    \
-    "generate_range_bellow(length, bellow)\n"                           \
+#define range_bellow__doc__                                             \
+    "range_bellow(length, bellow)\n"                                    \
     "--\n\n"                                                            \
     "Generate a N positive integers bellow."                            \
 
-#define generate_n_range_bellow__doc__                                  \
-    "generate_n_range_bellow(length, bellow, amount)\n"                 \
+#define n_range_bellow__doc__                                           \
+    "n_range_bellow(length, bellow, amount)\n"                          \
     "--\n\n"                                                            \
     "Generate a N-sized array with 'length' positive integers bellow."  \
 
