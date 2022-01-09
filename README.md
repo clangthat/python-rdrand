@@ -25,6 +25,4 @@ Open a Python 3x console and try to import:
 ```python
 import rdrand
 ```
-```diff
-- An ImportError should be raised in case of tour CPU doesn't support rdrand. -
-``` 
+###### An ImportError should be raised in case of your CPU doesn't support rdrand.
