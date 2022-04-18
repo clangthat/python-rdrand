@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PYEXEC="/usr/bin/python3.9"
+PYEXEC="/usr/bin/python3.10"
 
 function prereq() {
     if ! [[ -e $PYEXEC ]]; then
