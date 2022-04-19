@@ -36,7 +36,7 @@ char generate_rdrand64(int *number, int max) {
     return 0;
 }
 
-char generate_rdrand64_bellow(int *number, int bellow) {
+char generate_rdrand64_below(int *number, int below) {
     
     uint64_t retn;
     int m, v;
@@ -44,7 +44,7 @@ char generate_rdrand64_bellow(int *number, int bellow) {
     if (rdrand_check_support() == 1) {
         rdrand_get_uint64_retry(10, &retn);
         
-        v = (int) retn % (bellow - 1);
+        v = (int) retn % (below - 1);
         m = v >> sizeof(int) * (__CHAR_BIT__ - 1);
         *number = (int) (v + m) ^ m;
     } else {

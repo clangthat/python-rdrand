@@ -14,15 +14,15 @@
     "--\n\n"                                                            \
     "Generate a range between min, max (positive)."                     \
 
-#define range_bellow__doc__                                             \
-    "range_bellow(length, bellow)\n"                                    \
+#define range_below__doc__                                             \
+    "range_below(length, below)\n"                                    \
     "--\n\n"                                                            \
-    "Generate a N positive integers bellow."                            \
+    "Generate a N positive integers below."                            \
 
-#define n_range_bellow__doc__                                           \
-    "n_range_bellow(length, bellow, amount)\n"                          \
+#define n_range_below__doc__                                           \
+    "n_range_below(length, below, amount)\n"                          \
     "--\n\n"                                                            \
-    "Generate a N-sized array with 'length' positive integers bellow."  \
+    "Generate a N-sized array with 'length' positive integers below."  \
 
 #define is_rdrand_supported__doc__                                      \
     "is_rdrand_supported()\n"                                           \

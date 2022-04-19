@@ -51,11 +51,11 @@ static PyObject* randint(PyObject* self, PyObject *args) {
 
 }
 
-static PyListObject* n_range_bellow(PyObject* self, PyObject* args) {
+static PyListObject* n_range_below(PyObject* self, PyObject* args) {
 
-    int length, bellow, amount;
+    int length, below, amount;
 
-    if (!PyArg_ParseTuple(args, "iii", &length, &bellow, &amount)) {
+    if (!PyArg_ParseTuple(args, "iii", &length, &below, &amount)) {
         return NULL;
     }
 
@@ -67,9 +67,9 @@ static PyListObject* n_range_bellow(PyObject* self, PyObject* args) {
         return NULL;
     }
 
-    if (length > bellow) {
+    if (length > below) {
         PyGILState_STATE gstate = PyGILState_Ensure();
-        PyErr_SetString(PyExc_ValueError, "Length must be smaller than 'bellow', because this method will return a non-repeated values.");
+        PyErr_SetString(PyExc_ValueError, "Length must be smaller than 'below', because this method will return a non-repeated values.");
         PyGILState_Release(gstate);
 
         return NULL;
@@ -99,7 +99,7 @@ static PyListObject* n_range_bellow(PyObject* self, PyObject* args) {
             
             int insert = 1;
             
-            if (!generate_rdrand64_bellow(&randf, bellow+1)) {
+            if (!generate_rdrand64_below(&randf, below+1)) {
                 for (int j = 0; j < length; j++) {
                     if (array[j] == (int) randf) {
                         insert = 0;
@@ -133,17 +133,17 @@ static PyListObject* n_range_bellow(PyObject* self, PyObject* args) {
     return output;
 }
 
-static PyListObject* range_bellow(PyObject* self, PyObject* args) {
+static PyListObject* range_below(PyObject* self, PyObject* args) {
 
-    int length, bellow;
+    int length, below;
 
-    if (!PyArg_ParseTuple(args, "ii", &length, &bellow)) {
+    if (!PyArg_ParseTuple(args, "ii", &length, &below)) {
         return NULL;
     }
 
-    if (length > bellow) {
+    if (length > below) {
         PyGILState_STATE gstate = PyGILState_Ensure();
-        PyErr_SetString(PyExc_ValueError, "Length must be smaller than 'bellow', because this method will return a non-repeated values.");
+        PyErr_SetString(PyExc_ValueError, "Length must be smaller than 'below', because this method will return a non-repeated values.");
         PyGILState_Release(gstate);
 
         return NULL;
@@ -170,7 +170,7 @@ static PyListObject* range_bellow(PyObject* self, PyObject* args) {
         
         int insert = 1;
         
-        if (!generate_rdrand64_bellow(&randf, bellow+1)) {
+        if (!generate_rdrand64_below(&randf, below+1)) {
             for (int i = 0; i < length; i++) {
                 if (array[i] == (int) randf) {
                     insert = 0;
@@ -296,8 +296,8 @@ static PyObject* rdseed(PyObject* self) {
 static PyMethodDef methods[] = {
     {"range", (PyCFunction)range, METH_VARARGS | METH_KEYWORDS, range__doc__},
     {"randint", (PyCFunction)randint, METH_VARARGS, randint__doc__},
-    {"range_bellow", (PyCFunction)range_bellow, METH_VARARGS, range_bellow__doc__},
-    {"n_range_bellow", (PyCFunction)n_range_bellow, METH_VARARGS, n_range_bellow__doc__},
+    {"range_below", (PyCFunction)range_below, METH_VARARGS, range_below__doc__},
+    {"n_range_below", (PyCFunction)n_range_below, METH_VARARGS, n_range_below__doc__},
     {"is_rdrand_supported", (PyCFunction)is_rdrand_supported, METH_NOARGS, is_rdrand_supported__doc__},
     {"is_rdseed_supported", (PyCFunction)is_rdseed_supported, METH_NOARGS, is_rdseed_supported__doc__},
     {"rdseed", (PyCFunction)rdseed, METH_NOARGS, "Return a int64 long using rdseed cpu instruction."},
