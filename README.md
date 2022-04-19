@@ -9,6 +9,9 @@ RDRAND is available in Ivy Bridge processors and is part of the Intel 64 and IA-
 
 See more: https://en.wikipedia.org/wiki/RDRAND
 
+## Warning
+Do not use **rdrand/rdseed** alone as a **CSPRNG**.
+
 ## Installation
 ```sh
 # Clone this repo.
