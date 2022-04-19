@@ -29,3 +29,9 @@ Open a Python 3x console and try to import:
 import rdrand
 ```
 ###### An ImportError should be raised in case of your CPU doesn't support rdrand.
+
+## Resources
+[Intel® Digital Random Number Generator (DRNG) Software Implementation Guide](https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html)
+
+[Intel® 64 and IA-32 Architectures Software Developer’s Manuals @ 7.3.17.1](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)
+
