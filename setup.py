@@ -11,12 +11,12 @@ extra_args = [
     '-mrdrnd'
 ]
 
-module = Extension('rdrand', sources=sources)
+module = Extension('_rdrand', sources=sources)
 
 setup(
-    name="Python RDRAND",
-    version="1.0",
-    description="Python Interface for RDRAND functions",
+    name="Python RDRAND interface",
+    version="1.3",
+    description="Intel® - Digital Random Number Generator (DRNG) [Bull Mountain] interface for Python.",
     ext_modules=[module],
     extra_compile_args=extra_args
 )

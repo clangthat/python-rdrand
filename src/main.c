@@ -306,13 +306,13 @@ static PyMethodDef methods[] = {
 
 static struct PyModuleDef Module = {
     PyModuleDef_HEAD_INIT,
-    "rdrand",
+    "_rdrand",
     rdrand__doc__,
     -1,
     methods
 };
 
-PyMODINIT_FUNC PyInit_rdrand(void) {
+PyMODINIT_FUNC PyInit__rdrand(void) {
     
     /* Check rdrand/rdseed compatibiltiy before initialize the module */
     if (rdrand_check_support() != 1 || rdseed_check_support() != 1) {
