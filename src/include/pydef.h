@@ -12,7 +12,12 @@
 #define randint__doc__                                                  \
     "randint(min, max)\n"                                               \
     "--\n\n"                                                            \
-    "Generate a range between min, max (positive)."                     \
+    "DEPRECATED. DO NOT USE!"                     \
+
+#define randbits__doc__                                                  \
+    "randbits(number_bits)\n"                                            \
+    "--\n\n"                                                             \
+    "Generate `number_bits` random bits."                                \
 
 #define range_below__doc__                                             \
     "range_below(length, below)\n"                                    \

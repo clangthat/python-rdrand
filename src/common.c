@@ -9,6 +9,15 @@
 #include "include/rdrand.h"
 
 
+unsigned int absolute(int value) {
+
+    unsigned int result;
+    int const mask = value >> sizeof(int) * (CHAR_BIT - 1);
+    result = (value + mask) ^ mask;
+
+    return result;
+}
+
 char generate_rdrand64_ia32(float *randf, float min, float max) {
     int retries = 10;
     unsigned long long rand64;
@@ -22,13 +31,14 @@ char generate_rdrand64_ia32(float *randf, float min, float max) {
     return 0;
 }
 
-char generate_rdrand64(int *number, int max) {
+char generate_rdrand64(uint64_t *number) {
 
     uint64_t retn;
 
     if (rdrand_check_support() == 1) {
         rdrand_get_uint64_retry(10, &retn);
-        *number = (int) retn % max;
+        //*number = (int) retn % max;
+        *number = retn;
     } else {
         fprintf(stderr, "RDRAND instruction not supported.\n");
         return -1;

@@ -5,16 +5,71 @@
 #include "include/pydef.h"
 
 
-static PyObject* randint(PyObject* self, PyObject *args) {
+static PyObject* randbits(PyObject* self, PyObject* args) {
+    
+    int k, i, words;
+    uint64_t randf;
+    uint32_t *wordarray;
+    PyObject *result;
 
-    int randf;
-    int min, max;
 
-    if (!PyArg_ParseTuple(args, "ii", &min, &max)) {
+    if (!PyArg_ParseTuple(args, "i", &k))
+        return NULL;
+
+    if (k < 0) {
+        PyGILState_STATE gstate = PyGILState_Ensure();
+        PyErr_SetString(PyExc_ValueError, "Number of bits must be non-negative.\n");
+        PyGILState_Release(gstate);
+
         return NULL;
     }
 
-    if (min > max) {
+    if (k == 0)
+        return PyLong_FromLong(0);
+
+    if (k <= 32) {
+        generate_rdrand64(&randf);
+        return PyLong_FromUnsignedLong(abs((uint32_t) randf) >> (32 - k));
+    }
+
+    words = (k - 1) / 32 + 1;
+    wordarray = (uint32_t *) PyMem_Malloc(words * 4);
+    
+    if (wordarray == NULL) {
+        PyErr_NoMemory();
+        return NULL;
+    }
+
+    uint32_t temp;
+#if PY_LITTLE_ENDIAN
+    for (i = 0; i < words; i++, k -= 32)
+#else
+    for (i = words -1; i >= 0; i--, k-= 32)
+#endif
+    {
+        generate_rdrand64(&randf);
+        temp = (uint32_t) randf;
+        if (temp < 32)
+            temp >>= (32 - k);
+        wordarray[i] = temp;
+    }
+    result = _PyLong_FromByteArray((unsigned char*)wordarray, words * 4, PY_LITTLE_ENDIAN, 0);
+    PyMem_Free(wordarray);
+    return result;
+}
+
+/*
+static PyObject* randint(PyObject* self, PyObject *args) {
+    uint64_t randf;
+    int a, b, n;
+    int width;
+    int step = 1;
+
+    if (!PyArg_ParseTuple(args, "ii", &a, &b)) {
+        return NULL;
+    }
+
+    if (a > b) {
         PyGILState_STATE gstate = PyGILState_Ensure();
         PyErr_SetString(PyExc_ValueError, "Minimum value is greater than max.\n");
         PyGILState_Release(gstate);
@@ -22,9 +77,20 @@ static PyObject* randint(PyObject* self, PyObject *args) {
         return NULL;
     }
 
-    if (min < 0 && max < 0) {
+    if (a < 0 && b < 0) {
         PyGILState_STATE gstate = PyGILState_Ensure();
         PyErr_SetString(PyExc_ValueError, "Negative range isn't supported.");
+        PyGILState_Release(gstate);
+
+        return NULL;
+    }
+
+    width = b - a;
+    n = (width + step - 1) / step;
+
+    if (n <= 0) {
+        PyGILState_STATE gstate = PyGILState_Ensure();
+        PyErr_SetString(PyExc_ValueError, "empty range for randint.");
         PyGILState_Release(gstate);
 
         return NULL;
@@ -33,9 +99,10 @@ static PyObject* randint(PyObject* self, PyObject *args) {
     max++;
 
     while (1) {
-        if (!generate_rdrand64(&randf, max)) {
+        if (!generate_rdrand64(&randf)) {
 
-            if (randf >= min && randf <= max)
+
+            if ((int)randf >= min && (int)randf <= max)
                 break;
 
         } else {
@@ -47,9 +114,9 @@ static PyObject* randint(PyObject* self, PyObject *args) {
     // if (min < 0 && max < 0 && randf > 0)
     //     randf = ~randf + 1;
 
-    return (PyObject*) PyLong_FromLong(randf);
+    return (PyObject*) PyLong_FromLong(0);
 
-}
+}*/
 
 static PyListObject* n_range_below(PyObject* self, PyObject* args) {
 
@@ -295,7 +362,8 @@ static PyObject* rdseed(PyObject* self) {
 
 static PyMethodDef methods[] = {
     {"range", (PyCFunction)range, METH_VARARGS | METH_KEYWORDS, range__doc__},
-    {"randint", (PyCFunction)randint, METH_VARARGS, randint__doc__},
+    //{"randint", (PyCFunction)randint, METH_VARARGS, randint__doc__},
+    {"randbits", (PyCFunction)randbits, METH_VARARGS, randbits__doc__},
     {"range_below", (PyCFunction)range_below, METH_VARARGS, range_below__doc__},
     {"n_range_below", (PyCFunction)n_range_below, METH_VARARGS, n_range_below__doc__},
     {"is_rdrand_supported", (PyCFunction)is_rdrand_supported, METH_NOARGS, is_rdrand_supported__doc__},
