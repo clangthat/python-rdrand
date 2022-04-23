@@ -79,7 +79,7 @@ def randint(a: int, b: int) -> int:
 
 def randbytes(n: int) -> bytes:
     """ Generate 'n' random bytes """
-    return randbits(n * 8).to_bytes(n, 'little')
+    return _rdrand.randbits(n * 8).to_bytes(n, 'little')
 
 
 def choice(seq: Sequence) -> Any:
