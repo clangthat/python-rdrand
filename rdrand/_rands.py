@@ -5,6 +5,9 @@ __all__ = [
     'randint',
     'randbelow',
     'randrange',
+    'randbytes',
+    'choice',
+    'shuffle',
 ]
 
 
@@ -53,11 +56,6 @@ def randrange(start, stop=None, *, step=1):
     return start + step * randbelow(n)
 
 
-def randint(a: int, b: int) -> int: 
-    """Generate a random number in the range [a, b]"""
-    return randrange(a, b + 1)
-
-
 def randbelow(n: int) -> int:
     """Generate a number in range [0, n]"""
 
@@ -68,4 +66,29 @@ def randbelow(n: int) -> int:
         r = _rdrand.randbits(k)
 
     return r
+
+
+def randint(a: int, b: int) -> int: 
+    """Generate a random number in the range [a, b]"""
+    return randrange(a, b + 1)
+
+
+def randbytes(n: int) -> bytes:
+    """ Generate 'n' random bytes """
+    return randbits(n * 8).to_bytes(n, 'little')
+
+
+def choice(seq: Sequence) -> Any:
+    """ Choose a random element from a non-empty sequence """
+    if not seq:
+        raise IndexError("Cannot choose from an empty sequence!")
+    return seq[randbelow(len(seq))]
+
+
+def shuffle(seq: List) -> None:
+    """ Shuffle list 'seq' in-place and return None."""
+    for i in reversed(range(1, len(seq))):
+        j = randbelow(i+1)
+        x[i], x[j] = x[j], x[i]
+
 
