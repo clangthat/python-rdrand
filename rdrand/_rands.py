@@ -1,8 +1,13 @@
 import _rdrand
 
+from .limits import *
+from ._integer import uint_to_bytes
+
+
 from typing import Any
 from typing import Sequence
 from typing import List
+
 
 
 __all__ = [
@@ -79,7 +84,9 @@ def randint(a: int, b: int) -> int:
 
 def randbytes(n: int) -> bytes:
     """ Generate 'n' random bytes """
-    return _rdrand.randbits(n * 8).to_bytes(n, 'little')
+    r = _rdrand.randbits(n * 8)
+    #return _rdrand.randbits(n * 8).to_bytes(n, 'big')
+    return uint_to_bytes(r)
 
 
 def choice(seq: Sequence) -> Any:
