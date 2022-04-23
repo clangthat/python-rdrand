@@ -1,5 +1,9 @@
 import _rdrand
 
+from typing import Any
+from typing import Sequence
+from typing import List
+
 
 __all__ = [
     'randint',
