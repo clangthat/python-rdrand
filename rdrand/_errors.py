@@ -3,6 +3,6 @@
 class RdrandBaseException(BaseException):
     pass
 
-class InstructionNotSupported(RdRandBaseException):
+class InstructionNotSupported(RdrandBaseException):
     pass
 
