@@ -1,3 +1,9 @@
+# Python
+*.pyc
+__pycache__
+*.egg
+*.egg-info
+
 # Vscode files
 .vscode/
 
