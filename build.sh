@@ -4,7 +4,7 @@ PYEXEC="/usr/bin/python3.10"
 
 function prereq() {
     if ! [[ -e $PYEXEC ]]; then
-        echo "$PYEXEC not found. Please specify the Python 3.9 binary in line 3 of this script."
+        echo "$PYEXEC not found. Please specify the Python binary in line 3 of this script."
         exit 1
     fi
 
