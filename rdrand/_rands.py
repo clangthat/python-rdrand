@@ -2,12 +2,11 @@ import _rdrand
 
 from .limits import *
 from ._integer import uint_to_bytes
-
+from ._errors import *
 
 from typing import Any
 from typing import Sequence
 from typing import List
-
 
 
 __all__ = [
@@ -24,6 +23,14 @@ __all__ = [
     'shuffle',
 ]
 
+
+""" Ensure rdrand/rdseed support after import """
+if not all((_rdrand.is_rdrand_supported(),
+            _rdrand.is_rdseed_supported())):
+    raise InstructionNotSupported(
+            "rdrand or rdseed isn't supported by your cpu."
+    )
+    
 
 def real64() -> float:
     """ Return a 64 bit float random """
