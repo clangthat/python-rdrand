@@ -11,6 +11,9 @@ from typing import List
 
 
 __all__ = [
+    'real64',
+    'real32',
+    'rers53',
     'rand32',
     'rand64',
     'randint',
@@ -22,9 +25,15 @@ __all__ = [
 ]
 
 
+def real64() -> float:
+    """ Return a 64 bit float random """
+    return (_rdrand.rdrand64() + 0.5) * (1.0/4294967296.0)
+
+
 def real32() -> float
     """ Return a 32 bit float random """
     return _rdrand.rdrand32() * (1.0/4294967295.0)
+
 
 def res53() -> float:
     """ Return a random number on [0, 1] with 53-bit resolution """
