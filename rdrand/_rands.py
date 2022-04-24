@@ -13,7 +13,7 @@ from typing import List
 __all__ = [
     'real64',
     'real32',
-    'rers53',
+    'res53',
     'rand32',
     'rand64',
     'randint',
