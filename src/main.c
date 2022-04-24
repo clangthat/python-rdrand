@@ -3,7 +3,30 @@
 
 #include "include/common.h"
 #include "include/pydef.h"
+#include "include/rdrand.h"
 
+
+/*
+ Direct access methods 
+*/
+static PyObject* rdrand32(PyObject* self) {
+    /* Return a uint32_t random. Zero return indicates a underflow */
+    uint32_t randf;
+    int status = rdrand_get_uint32_retry(10, &randf);
+    
+    if (status == 1)
+        return PyLong_FromLong(randf);
+    return PyLong_FromLong(0);
+    
+}
+
+
+static PyObject* rdrand64(PyObject* self) {
+    uint64_t randf;
+    generate_rdrand64(&randf);
+    return PyLong_FromUnsignedLong(randf);
+
+}
 
 static PyObject* randbits(PyObject* self, PyObject* args) {
     
@@ -58,65 +81,6 @@ static PyObject* randbits(PyObject* self, PyObject* args) {
     return result;
 }
 
-/*
-static PyObject* randint(PyObject* self, PyObject *args) {
-    uint64_t randf;
-    int a, b, n;
-    int width;
-    int step = 1;
-
-    if (!PyArg_ParseTuple(args, "ii", &a, &b)) {
-        return NULL;
-    }
-
-    if (a > b) {
-        PyGILState_STATE gstate = PyGILState_Ensure();
-        PyErr_SetString(PyExc_ValueError, "Minimum value is greater than max.\n");
-        PyGILState_Release(gstate);
-
-        return NULL;
-    }
-
-    if (a < 0 && b < 0) {
-        PyGILState_STATE gstate = PyGILState_Ensure();
-        PyErr_SetString(PyExc_ValueError, "Negative range isn't supported.");
-        PyGILState_Release(gstate);
-
-        return NULL;
-    }
-
-    width = b - a;
-    n = (width + step - 1) / step;
-
-    if (n <= 0) {
-        PyGILState_STATE gstate = PyGILState_Ensure();
-        PyErr_SetString(PyExc_ValueError, "empty range for randint.");
-        PyGILState_Release(gstate);
-
-        return NULL;
-    }
-
-    max++;
-
-    while (1) {
-        if (!generate_rdrand64(&randf)) {
-
-
-            if ((int)randf >= min && (int)randf <= max)
-                break;
-
-        } else {
-            perror("Failed to get random value.");
-            exit(2);
-        }
-    }
-
-    // if (min < 0 && max < 0 && randf > 0)
-    //     randf = ~randf + 1;
-
-    return (PyObject*) PyLong_FromLong(0);
-
-}*/
 
 static PyListObject* n_range_below(PyObject* self, PyObject* args) {
 
@@ -369,6 +333,8 @@ static PyMethodDef methods[] = {
     {"is_rdrand_supported", (PyCFunction)is_rdrand_supported, METH_NOARGS, is_rdrand_supported__doc__},
     {"is_rdseed_supported", (PyCFunction)is_rdseed_supported, METH_NOARGS, is_rdseed_supported__doc__},
     {"rdseed", (PyCFunction)rdseed, METH_NOARGS, "Return a int64 long using rdseed cpu instruction."},
+    {"rdrand64", (PyCFunction)rdrand64, METH_NOARGS, "Return a int64 long using rdrand cpu instruction."},
+    {"rdrand32", (PyCFunction)rdrand32, METH_NOARGS, "Return a uint32_t random. Zero return indicates a underflow."},
     {NULL, NULL, 0, NULL}
 };
 

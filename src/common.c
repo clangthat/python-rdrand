@@ -37,7 +37,6 @@ char generate_rdrand64(uint64_t *number) {
 
     if (rdrand_check_support() == 1) {
         rdrand_get_uint64_retry(10, &retn);
-        //*number = (int) retn % max;
         *number = retn;
     } else {
         fprintf(stderr, "RDRAND instruction not supported.\n");
@@ -97,55 +96,3 @@ char generate_rdseed(uint64_t *number) {
     return -1;
 
 }
-
-// char* generate_range(unsigned int length) {
-
-//     int randf;
-//     char* output = malloc(FIXED_SIZE);
-//     int array[91] = { 0 };
-//     int pos = 0;
-
-
-//     memset(output, 0, FIXED_SIZE);
-
-//     if(length > 90) {
-//         printf("Length must be in the following range: 1-90. %d given.\n", length);
-//         return "-1";
-//     }
-
-//     while (1) {
-        
-//         int insert = 1;
-        
-//         if (!generate_rdrand64(&randf)) {
-//             for (int i = 0; i < length; i++) {
-//                 if (array[i] == (int) randf) {
-//                     insert = 0;
-//                     break;
-//                 }
-//             }
-
-//             if (pos == length) {
-//                 break;
-//             }
-
-//             if (insert) {
-//                 array[pos] = (int) randf;
-//                 pos++;
-//             }
-//         } else {
-//             perror("Failed to get random value.");
-//             exit(2);
-//         }
-//     }
-
-//     for (int i = 0; i < length; i++) {
-//         if (i == length - 1) {
-//             sprintf(output + strlen(output), "%d", (int) array[i]);
-//         } else {
-//             sprintf(output + strlen(output), "%d-", (int) array[i]);
-//         }
-//     }
-
-//     return output;
-// }
