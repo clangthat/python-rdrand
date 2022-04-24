@@ -30,7 +30,7 @@ def real64() -> float:
     return (_rdrand.rdrand64() + 0.5) * (1.0/4294967296.0)
 
 
-def real32() -> float
+def real32() -> float:
     """ Return a 32 bit float random """
     return _rdrand.rdrand32() * (1.0/4294967295.0)
 
