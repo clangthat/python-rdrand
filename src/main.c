@@ -306,14 +306,14 @@ static PyListObject* range(PyObject* self, PyObject* args, PyObject* kwargs) {
 
 static PyObject* is_rdrand_supported(PyObject* self) {
     if (rdrand_check_support() == 1)
-        return (PyObject*)Py_True;
-    return (PyObject*)Py_False;
+        Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
 }
 
 static PyObject* is_rdseed_supported(PyObject* self) {
     if (rdseed_check_support() == 1)
-        return (PyObject*)Py_True;
-    return (PyObject*)Py_False;
+        Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
 }
 
 static PyObject* rdseed(PyObject* self) {
