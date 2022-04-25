@@ -1,3 +1,9 @@
+// Copyright (c) 2022 murilo
+// 
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
+
 #ifndef __RDRAND_H__
 #define __RDRAND_H__
 #include <stdint.h>

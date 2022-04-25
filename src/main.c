@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2022 murilo
+ * 
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ */
+
+
 #define PYW_SSIZE_T_CLEAN
 #include <Python.h>
 

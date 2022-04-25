@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2022 murilo
+ * 
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ */
+
+
 #include "include/rdrand.h"
 
 #include <stdio.h>

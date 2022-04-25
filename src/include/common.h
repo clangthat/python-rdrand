@@ -1,3 +1,9 @@
+// Copyright (c) 2022 murilo
+// 
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
+
 #ifndef COMMON_H
 #define COMMON_H
 
