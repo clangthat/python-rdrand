@@ -144,6 +144,6 @@ def shuffle(seq: List) -> None:
     """ Shuffle list 'seq' in-place and return None."""
     for i in reversed(range(1, len(seq))):
         j = randbelow(i+1)
-        x[i], x[j] = x[j], x[i]
+        seq[i], seq[j] = seq[j], seq[i]
 
 
