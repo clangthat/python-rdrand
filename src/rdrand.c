@@ -31,29 +31,6 @@ void get_cpuid_windows(int leaf, CPUIDinfo *info) {
         info->EDX = d;
 }
 
-/*void get_cpuid_linux(CPUIDinfo *info, const uint32_t func, const uint32_t subfunc)*/
-/*{*/
-/*asm(".intel_syntax noprefix\n");*/
-/*asm("mov r8, rdi\n");*/
-/*asm("mov r9, rsi\n");*/
-/*asm("mov r10, rdx\n");*/
-/*asm("push rax\n");*/
-/*asm("push rbx\n");*/
-/*asm("push rcx\n");*/
-/*asm("push rdx\n");*/
-/*asm("mov eax, r9d\n");*/
-/*asm("mov ecx, r10d\n");*/
-/*asm("cpuid;\n");*/
-/*asm("mov DWORD PTR [r8], eax\n");*/
-/*asm("mov DWORD PTR [r8+4], ebx\n");*/
-/*asm("mov DWORD PTR [r8+8], ecx\n");*/
-/*asm("mov DWORD PTR [r8+12], edx\n");*/
-/*asm("pop rdx\n");*/
-/*asm("pop rcx\n");*/
-/*asm("pop rbx\n");*/
-/*asm("pop rax\n");*/
-/*asm(".att_syntax prefix\n");*/
-/*}*/
 
 /* Trying GAS format to make clang happy */
 void get_cpuid_linux(CPUIDinfo *info, const uint32_t func, const uint32_t subfunc) {
@@ -79,6 +56,33 @@ void get_cpuid_linux(CPUIDinfo *info, const uint32_t func, const uint32_t subfun
     pop rax;\n\
     .att_syntax prefix\n");
 }
+
+#ifdef __i386__
+int _have_cpuid() {
+
+	/* cpuid availability is determined by setting and clearing the 
+	 * ID flag (bit 21) in the EFLAGS register. If we can do that, we
+	 * have cpuid. This is only necessary on 32-bit processors.
+	 */
+    uint32_t fbefore, fafter;
+
+	asm(" 					;\
+		pushf				;\
+		pushf				;\
+		pop %0				;\
+		mov %0,%1			;\
+		xor $0x40000,%1		;\
+		push %1				;\
+		popf				;\
+		pushf				;\
+		pop %1				;\
+		popf				"
+	: "=&r" (fbefore), "=&r" (fafter)
+	);
+
+	return (0x40000 & (fbefore^fafter));
+}
+#endif
 
 
 void get_cpuid(CPUIDinfo *info, const uint32_t func, const uint32_t subfunc) {
@@ -136,6 +140,9 @@ int check_rdseed() {
 }
 
 int rdrand_check_support() {
+#ifdef __i386___
+    if (!_have_cpuid()) return 0;
+#endif
 	if ((check_is_intel()==1) || (check_is_amd()==1)){
         if (check_rdrand()==1) return 1;
 	}
@@ -143,19 +150,20 @@ int rdrand_check_support() {
 }
 
 int rdseed_check_support() {
+#ifdef __i386___
+    if (!_have_cpuid()) return 0;
+#endif
 	if ((check_is_intel()==1) || (check_is_amd()==1)){
         if (check_rdseed()==1) return 1;
 	}
 	return 0;
 }
 
-/***************************************************/
-/* Gathers 16 bits of entropy through RDRAND       */
-/*   The 16 bit result is zero extended to 32 bits */
-/*   Writes that entropy to *therand.              */
-/*   Returns 1 on success, or 0 on underflow      */
-/***************************************************/
-
+/* Gathers 16 bits of entropy through RDRAND      
+   The 16 bit result is zero extended to 32 bits 
+   Writes that entropy to *therand.              
+   Returns 1 on success, or 0 on underflow
+*/
 int rdrand16_step(uint16_t *therand) {
     
     uint16_t foo;
@@ -188,12 +196,10 @@ int rdseed16_step(uint16_t *therand)
     return cf_error_status;
 }
 
-/**********************************************/
-/* Gathers 32 bits of entropy through RDRAND  */
-/*   Writes that entropy to *therand.         */
-/*   Returns 1 on success, or 0 on undeerflow */
-/**********************************************/
-
+/* Gathers 32 bits of entropy through RDRAND
+   Writes that entropy to *therand.        
+   Returns 1 on success, or 0 on undeerflow
+*/
 int rdrand32_step(uint32_t *therand) {
 
     int foo;
@@ -226,12 +232,10 @@ int rdseed32_step(uint32_t *therand) {
     return cf_error_status;
 }
 
-/**********************************************/
-/* Gathers 64 bits of entropy through RDRAND  */
-/*   Writes that entropy to *therand.         */
-/*    Returns 1 on success, or 0 on underflow */
-/**********************************************/
-
+/* Gathers 64 bits of entropy through RDRAND
+   Writes that entropy to *therand.         
+   Returns 1 on success, or 0 on underflow
+*/
 int rdrand64_step(uint64_t *therand) {
         
     uint64_t foo;
@@ -264,13 +268,11 @@ int rdseed64_step(uint64_t *therand) {
     return cf_error_status;
 }
 
-/**************************************************/
-/* Uses RdRand to acquire a 32 bit random number  */
-/*   Writes that entropy to (uint32_t *)dest. */
-/*   Will not attempt retry on underflow          */
-/*   Returns 1 on success, or 0 on underflow      */
-/**************************************************/
-
+/* Uses RdRand to acquire a 32 bit random number 
+   Writes that entropy to (uint32_t *)dest.
+   Will not attempt retry on underflow
+   Returns 1 on success, or 0 on underflow
+*/
 int rdrand_get_uint32(uint32_t *dest) {
 
 	uint32_t therand;
@@ -311,13 +313,11 @@ int rdseed_get_uint64(uint64_t *dest)
 	} else return 0;
 }
 
-/**************************************************/
-/* Uses RdRand to acquire a 32 bit random number  */
-/*   Writes that entropy to (uint32_t *)dest. */
-/*   Will retry up to retry_limit times           */
-/*   Returns 1 on success, or 0 on underflow      */
-/**************************************************/
-
+/* Uses RdRand to acquire a 32 bit random number  
+   Writes that entropy to (uint32_t *)dest. 
+   Will retry up to retry_limit times           
+   Returns 1 on success, or 0 on underflow
+*/
 int rdrand_get_uint32_retry(uint32_t retry_limit, uint32_t *dest) {
 
     int success;
@@ -399,13 +399,11 @@ int rdseed_get_uint64_retry(uint32_t retry_limit, uint64_t *dest) {
     }
 }
 
-/****************************************************************/
-/* Uses RdRand to acquire a block of n 32 bit random numbers    */
-/*   Writes that entropy to (unsigned long long int *)dest[0+]. */
-/*   Will retry up to retry_limit times                         */
-/*   Returns 1 on success, or 0 on underflow                    */
-/****************************************************************/
-
+/* Uses RdRand to acquire a block of n 32 bit random numbers   
+   Writes that entropy to (unsigned long long int *)dest[0+]. 
+   Will retry up to retry_limit times                         
+   Returns 1 on success, or 0 on underflow
+*/
 int rdrand_get_n_uint32_retry(uint32_t n, uint32_t retry_limit, uint32_t *dest) {
     
     int success=0;
@@ -445,13 +443,12 @@ int rdseed_get_n_uint32_retry(uint32_t n, uint32_t retry_limit, uint32_t *dest) 
 
     return 1; 
 }
-/****************************************************************/
-/* Uses RdRand to acquire a block of n 64 bit random numbers    */
-/*   Writes that entropy to (unsigned long long int *)dest[0+]. */
-/*   Will retry up to retry_limit times                         */
-/*   Returns 1 on success, or 0 on underflow                    */
-/****************************************************************/
 
+/* Uses RdRand to acquire a block of n 64 bit random numbers   
+   Writes that entropy to (unsigned long long int *)dest[0+].
+   Will retry up to retry_limit times                        
+   Returns 1 on success, or 0 on underflow
+*/                  
 int rdrand_get_n_uint64_retry(uint32_t n, uint32_t retry_limit, uint64_t *dest) {
 
     int success=0;

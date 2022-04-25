@@ -1,3 +1,5 @@
+#ifndef __RDRAND_H__
+#define __RDRAND_H__
 #include <stdint.h>
 
 extern int rdrand16_step(uint16_t *therand);
@@ -22,3 +24,4 @@ extern int rdseed_get_n_uint32_retry(uint32_t n, uint32_t retry_limit, uint32_t 
 extern int rdrand_get_n_uint64_retry(uint32_t n, uint32_t retry_limit, uint64_t *dest);
 extern int rdseed_get_n_uint64_retry(uint32_t n, uint32_t retry_limit, uint64_t *dest);
 
+#endif
