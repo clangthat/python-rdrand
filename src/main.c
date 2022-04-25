@@ -31,7 +31,7 @@ static PyObject* rdrand64(PyObject* self) {
 static PyObject* randbits(PyObject* self, PyObject* args) {
     
     int k, i, words;
-    uint64_t randf;
+    uint32_t randf;
     uint32_t *wordarray;
     PyObject *result;
 
@@ -51,8 +51,8 @@ static PyObject* randbits(PyObject* self, PyObject* args) {
         return PyLong_FromLong(0);
 
     if (k <= 32) {
-        generate_rdrand64(&randf);
-        return PyLong_FromUnsignedLong(abs((uint32_t) randf) >> (32 - k));
+        rdrand_get_uint32_retry(10, &randf);
+        return PyLong_FromUnsignedLong(randf >> (32 - k));
     }
 
     words = (k - 1) / 32 + 1;
@@ -63,18 +63,17 @@ static PyObject* randbits(PyObject* self, PyObject* args) {
         return NULL;
     }
 
-    uint32_t temp;
 #if PY_LITTLE_ENDIAN
     for (i = 0; i < words; i++, k -= 32)
 #else
     for (i = words -1; i >= 0; i--, k-= 32)
 #endif
     {
-        generate_rdrand64(&randf);
-        temp = (uint32_t) randf;
-        if (temp < 32)
-            temp >>= (32 - k);
-        wordarray[i] = temp;
+        rdrand_get_uint32_retry(10, &randf);
+        if (randf < 32)
+            randf >>= (32 - k);
+
+        wordarray[i] = randf;
     }
     result = _PyLong_FromByteArray((unsigned char*)wordarray, words * 4, PY_LITTLE_ENDIAN, 0);
     PyMem_Free(wordarray);
