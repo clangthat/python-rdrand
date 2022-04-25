@@ -21,6 +21,9 @@ static PyObject* rdrand32(PyObject* self) {
 }
 
 
+/*
+ Indirect access methods 
+*/
 static PyObject* rdrand64(PyObject* self) {
     uint64_t randf;
     generate_rdrand64(&randf);
