@@ -104,13 +104,19 @@ def randrange(start, stop=None, *, step=1):
     return start + step * randbelow(n)
 
 
-def randbelow(n: int) -> int:
-    """Generate a number in range [0, n]"""
+def randbelow(n: int, *, nolimit=False) -> int:
+    """Generate a number in range [0, n]
     
-    if n > UINT_MAX - 1:
-        raise ValueError(
-                "randbelow() does not support integers greater than 32 bits."
-        )
+    Args:
+        nolimit (bool): Disable 32 bit integers limit. (Default to False)
+    """
+    
+    if not nolimit:
+        if n > UINT_MAX - 1:
+            raise ValueError(
+                "randbelow() does not support integers greater than 32 bits." +
+                "\nTo use this without limitation set `nolimit` to True."
+            )
 
     k = n.bit_length()
     r = _rdrand.randbits(k)
