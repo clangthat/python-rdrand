@@ -5,7 +5,6 @@
  * https://opensource.org/licenses/MIT
  */
 
-
 #define PYW_SSIZE_T_CLEAN
 #include <Python.h>
 
@@ -25,9 +24,7 @@ static PyObject* rdrand32(PyObject* self) {
     if (status == 1)
         return PyLong_FromLong(randf);
     return PyLong_FromLong(0);
-    
 }
-
 
 /*
  Indirect access methods 
@@ -36,7 +33,6 @@ static PyObject* rdrand64(PyObject* self) {
     uint64_t randf;
     generate_rdrand64(&randf);
     return PyLong_FromUnsignedLong(randf);
-
 }
 
 static PyObject* randbits(PyObject* self, PyObject* args) {
@@ -166,8 +162,6 @@ static PyListObject* n_range_below(PyObject* self, PyObject* args) {
         }
 
         PyList_SetItem((PyObject*) output, (Py_ssize_t) i, (PyObject*) sublist);
-        // PyList_Append(output, sublist);
-
     }
 
     free(array);
@@ -274,7 +268,6 @@ static PyListObject* range(PyObject* self, PyObject* args, PyObject* kwargs) {
     int randf;
     PyListObject* output = (PyListObject*) PyList_New((Py_ssize_t)length);
     
-    // int array[91] = { 0 };
     int* array = (int*) malloc(boundary * sizeof(int));
     memset(array, 0, boundary * sizeof(int));
     
@@ -328,10 +321,10 @@ static PyObject* is_rdseed_supported(PyObject* self) {
 
 static PyObject* rdseed(PyObject* self) {
 
-    uint64_t retorno = 0;
-    generate_rdseed(&retorno);
+    uint64_t retn = 0;
+    generate_rdseed(&retn);
 
-    return (PyObject*) PyLong_FromLong(retorno);
+    return (PyObject*) PyLong_FromLong(retn);
 }
 
 static PyMethodDef methods[] = {
@@ -369,32 +362,3 @@ PyMODINIT_FUNC PyInit__rdrand(void) {
 
     return PyModule_Create(&Module);
 }
-
-// int main(int argc, char** argv) {
-//     wchar_t *program = Py_DecodeLocale(argv[0], NULL);
-    
-//     if (program == NULL) {
-//         fprintf(stderr, "Fatal error: cannot decode argv[0].\n");
-//         exit(1);
-//     }
-
-//     /* Add a built-in module, before Py_Initialize */
-//     if (PyImport_AppendInittab("rdrand", PyInit_rdrand) == -1) {
-//         fprintf(stderr, "Error: could not extend in-built modules table.\n");
-//         exit(1);
-//     }
-
-//     Py_SetProgramName(program);
-
-//     /* Initialize the Python interpreter */
-//     Py_Initialize();
-
-//     PyObject *pmodule = PyImport_ImportModule("rdrand");
-//     if (!pmodule) {
-//         PyErr_Print();
-//         fprintf(stderr, "Error: could not import module 'rdrand'.\n");
-//     }
-
-//     PyMem_RawFree(program);
-//     return 0;
-// }
