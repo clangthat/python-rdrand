@@ -48,6 +48,16 @@
 #define rdseed__doc__                                                   \
     "rdseed()\n"                                                        \
     "--\n\n"                                                            \
-    "Return an int converted from uint64_t using  rdseed instruction."  \
+    "Return a int64 long using rdseed cpu instruction."                 \
+
+#define rdrand64__doc__                                                 \
+    "rdrand64()\n"                                                      \
+    "--\n\n"                                                            \
+    "Return a int64 long using rdrand cpu instruction."                 \
+
+#define rdrand32__doc__                                                 \
+    "rdrand32()\n"                                                      \
+    "--\n\n"                                                            \
+    "Return a uint32_t random. Zero return indicates a underflow."      \
 
 #endif

@@ -336,15 +336,14 @@ static PyObject* rdseed(PyObject* self) {
 
 static PyMethodDef methods[] = {
     {"range", (PyCFunction)range, METH_VARARGS | METH_KEYWORDS, range__doc__},
-    //{"randint", (PyCFunction)randint, METH_VARARGS, randint__doc__},
     {"randbits", (PyCFunction)randbits, METH_VARARGS, randbits__doc__},
     {"range_below", (PyCFunction)range_below, METH_VARARGS, range_below__doc__},
     {"n_range_below", (PyCFunction)n_range_below, METH_VARARGS, n_range_below__doc__},
     {"is_rdrand_supported", (PyCFunction)is_rdrand_supported, METH_NOARGS, is_rdrand_supported__doc__},
     {"is_rdseed_supported", (PyCFunction)is_rdseed_supported, METH_NOARGS, is_rdseed_supported__doc__},
-    {"rdseed", (PyCFunction)rdseed, METH_NOARGS, "Return a int64 long using rdseed cpu instruction."},
-    {"rdrand64", (PyCFunction)rdrand64, METH_NOARGS, "Return a int64 long using rdrand cpu instruction."},
-    {"rdrand32", (PyCFunction)rdrand32, METH_NOARGS, "Return a uint32_t random. Zero return indicates a underflow."},
+    {"rdseed", (PyCFunction)rdseed, METH_NOARGS, rdseed__doc__},
+    {"rdrand64", (PyCFunction)rdrand64, METH_NOARGS, rdrand64__doc__},
+    {"rdrand32", (PyCFunction)rdrand32, METH_NOARGS, rdrand32__doc__},
     {NULL, NULL, 0, NULL}
 };
 
